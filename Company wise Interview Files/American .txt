@@ -2,7 +2,21 @@ American india pvt
 
 1. Roles and responsibilities
 2. 3 tier architecture
-3. How to stop autoscaling in aws
+3. How to stop autoscaling in aws ?
+To stop autoscaling in AWS, you can perform the following steps:
+Log in to the AWS Management Console and navigate to the EC2 Auto Scaling service.
+Select the autoscaling group that you want to stop.
+Click on the "Edit" button in the "Auto Scaling Group Details" section.
+In the "Desired Capacity" field, set the value to 0.
+Click on the "Update" button to save the changes.
+Setting the "Desired Capacity" to 0 will cause the autoscaling group to stop scaling and terminate all of its instances. Any new requests or traffic 
+will not trigger any new instance launches. However, keep in mind that the instances that were launched by the autoscaling group will still be running 
+and will need to be terminated manually. You can do this by navigating to the EC2 Instances page and terminating the instances that were launched by the 
+autoscaling group.
+
+It's important to note that stopping autoscaling can have a significant impact on the availability and performance of your application. You should consider 
+the implications before stopping autoscaling and ensure that you have a plan in place to manage your application's resources manually if necessary.
+
 4. How to shift to other branch in terraform file
 5. Monitoring tools
 6. How to autoscale pods
