@@ -8,15 +8,72 @@ Explain your stages of cicd?
 Why you're using build number for version instead of commit id ? 
 How developers pushing code to github? Which branch he's pushing? 
 How you're failing sonarqube stage if it didn't passes the threshold? 
+
 How many stages in dockerfile? Tell me the image size after building the dockerfile
+A simple front-end application built with a lightweight base image and minimal dependencies can have an image size of around 100-200MB. However, more complex 
+front-end applications with a larger number of dependencies and assets can have larger image sizes of 500MB or more.
+
 How many sizes of image you come across in docker? 
+There are typically three sizes of images that you may come across when working with Docker:
+
+Base images: These are the starting point for building Docker images. They contain the minimum necessary files and dependencies to run an application. 
+Base images can be official images from Docker or custom images that you create.
+
+Intermediate images: These are the layers that are created during the build process. They are not intended to be used directly, but instead are used to create 
+the final image.
+
+Final images: These are the images that are created at the end of the build process. They contain the application code and any necessary dependencies, and are 
+intended to be used as the runtime image for the application.
+
+In addition to these three sizes, there are also "slim" and "alpine" versions of base images that are optimized for size and can help reduce the final size of 
+the Docker image. These smaller images often include only the bare minimum necessary to run an application, which can help reduce the attack surface and 
+improve security.
+
+
 Difference between cmd and entry point and which one you're using ? 
 Difference between RUN and Add
 How you're using jfrog repo? Is it single repo for all builds or you divide for daily, weekly builds? 
-What will happen if I delete chart.yaml file? 
+In a typical software development workflow, a JFrog Artifactory instance may have multiple repositories that are used for different types of artifacts or builds. 
+For example, a development team may have a repository for daily builds, another repository for weekly builds, and yet another repository for release builds. This 
+helps to organize artifacts and ensure that different builds are kept separate and easily accessible.
 
-How to execute helm charts in loop? Say I've 4 charts and one should execute after other 
+What will happen if I delete chart.yaml file? 
+If you delete the Chart.yaml file from a Helm chart, the chart will no longer be recognized as a valid Helm chart and cannot be installed or upgraded using Helm.
+
+The Chart.yaml file is a required file in a Helm chart that contains important information about the chart, such as the chart name, version, description, 
+and maintainers. This file is used by Helm to identify and manage the chart, and without it, Helm cannot properly install or upgrade the chart.
+
+If you accidentally delete the Chart.yaml file from a Helm chart, you can recreate it by manually creating a new Chart.yaml file with the appropriate fields 
+and values. You can also use the helm create command to generate a new chart with a default Chart.yaml file.
+
+How to execute helm charts in loop? Say I've 4 charts and one should execute after other ?
+You can execute multiple Helm charts in a loop by creating a Bash script that iterates through the list of charts and runs the helm install or helm upgrade command 
+for each chart.
+
+Here's an example Bash script that executes four Helm charts in order:
+
+#!/bin/bash
+
+# Define the list of charts
+CHARTS=("chart1" "chart2" "chart3" "chart4")
+
+# Loop through the list of charts and execute the Helm commands
+for CHART in "${CHARTS[@]}"
+do
+    helm upgrade --install "$CHART" ./"$CHART" --wait
+done
+In this script, the list of charts is defined as an array using the CHARTS variable. The for loop iterates through the list of charts and executes the 
+helm upgrade --install command for each chart, using the chart name as the release name and the chart directory as the chart path.
+
 I don't want to store secrets in jfrog repo. What's your approach for this? 
+Storing secrets in a JFrog repository is generally not recommended because it can expose sensitive information to unauthorized users. Instead, there are several
+approaches that can be used to manage secrets in a more secure manner:
+
+Environment Variables: You can use environment variables to store sensitive information such as passwords, API keys, and other secrets. Environment variables can 
+be passed to a container at runtime using the -e flag or can be defined in a Kubernetes Secret and referenced in a container's envFrom field.
+
+Kubernetes Secrets: Kubernetes provides a built-in Secrets API that can be used to securely store and manage sensitive information. Secrets can be created manually 
+or generated automatically using a tool like the kubectl command-line interface.
 How you're using dependencies in charts? 
 Explain your k8s cluster. How you're adding new worker nodes if you're using on prem servers? 
 Do you know to write jenkinsfile without using snippet generator? 
