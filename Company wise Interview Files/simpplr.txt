@@ -1,16 +1,103 @@
-Simpplr
+Simppler
 
-Introduce yourself. Explain your roles and responsibility
+1) Introduce yourself. Explain your roles and responsibility
 
-Difference between deployment and statefulset
+2) Difference between deployment and statefulset
 
 Difference between service and headless service
+In Kubernetes, a Service is a resource that provides a stable IP address and DNS name for a set of pods. It allows you to expose a set of pods as a single 
+network endpoint and provides load balancing across them. When you create a Service in Kubernetes, it creates a virtual IP address (ClusterIP) for the Service, 
+which can be used to access the pods that are part of the Service.
 
-How do you make sure you're application is running always in k8s cluster? 
+On the other hand, a Headless Service is a Service that does not have a ClusterIP. Instead, it returns the IP addresses of the individual pods that are part of 
+the Service. When you create a Headless Service in Kubernetes, it creates a set of DNS records for the pods that are part of the Service. This allows you to 
+access each individual pod by its IP address or hostname.
 
-What do you know about pod disruption budget? 
+Here are some key differences between a Service and a Headless Service:
 
-How you give access to k8s cluster? 
+Service: Provides a single IP address and DNS name for a set of pods, which can be used for load balancing and service discovery. The IP address is stable and does 
+not change even if the underlying pods are replaced or moved.
+
+Headless Service: Returns the IP addresses of individual pods, which can be used for direct communication with the pods. The IP addresses may change if the 
+underlying pods are replaced or moved.
+
+Service: Provides load balancing across the pods that are part of the Service.
+
+Headless Service: Does not provide load balancing. Each pod is treated as a separate endpoint.
+
+Service: Can be used with any protocol that runs over IP, including TCP, UDP, and HTTP.
+
+Headless Service: Can only be used with protocols that support multiple endpoints, such as TCP or UDP.
+
+In summary, a Service provides a stable IP address and DNS name for a set of pods, which can be used for load balancing and service discovery, while a Headless 
+Service returns the IP addresses of individual pods and is used for direct communication with the pods.
+
+
+3) How do you make sure you're application is running always in k8s cluster? 
+
+To ensure that your application is always running in a Kubernetes cluster, you can use various strategies and tools provided by Kubernetes. Here are a few ways 
+to ensure high availability of your application:
+
+Use ReplicaSets: A ReplicaSet ensures that a specified number of replicas of a pod are running at all times. If a pod fails or is deleted, the ReplicaSet 
+automatically creates a new pod to maintain the desired number of replicas. You can use ReplicaSets to ensure that your application is always running in the cluster.
+
+Use Deployments: A Deployment manages a ReplicaSet and provides declarative updates to your application. Deployments allow you to roll out updates to your 
+application with zero downtime by gradually replacing old replicas with new ones. You can use Deployments to ensure that your application is always available 
+during updates and upgrades.
+
+Use liveness and readiness probes: Liveness probes are used to determine if a pod is running, while readiness probes are used to determine if a pod is ready to 
+serve requests. By configuring liveness and readiness probes, you can ensure that Kubernetes detects and replaces any pods that are not functioning properly.
+
+Use horizontal pod autoscaling: Horizontal pod autoscaling automatically scales the number of replicas of a pod based on CPU utilization or custom metrics. 
+By configuring horizontal pod autoscaling, you can ensure that your application always has the necessary resources to handle incoming traffic.
+
+Use rolling updates and rollbacks: Rolling updates and rollbacks allow you to update or revert to a previous version of your application with zero downtime. By 
+using rolling updates and rollbacks, you can ensure that your application is always available during updates and upgrades.
+
+By implementing these strategies, you can ensure that your application is always running in a Kubernetes cluster and can handle incoming traffic with high 
+availability and scalability.
+
+4) What do you know about pod disruption budget? 
+
+A Pod Disruption Budget (PDB) is a Kubernetes feature that allows you to define the minimum availability requirements for a set of pods during a disruption. 
+It helps you to ensure that your application remains available during planned disruptions, such as updates or upgrades, or unplanned disruptions, such as 
+node failures.
+
+A Pod Disruption Budget is defined as a policy that specifies the maximum number or percentage of pods that can be unavailable during a disruption. For example, 
+you might set a PDB to ensure that at least two replicas of a pod are running at all times, so that Kubernetes will not allow more than one replica to be 
+unavailable simultaneously.
+
+When a disruption occurs, such as a node failure or a planned upgrade, Kubernetes will attempt to gracefully terminate the affected pods in a way that respects the 
+Pod Disruption Budget. If terminating a pod would violate the PDB, Kubernetes will wait until a replacement pod is available before terminating the existing pod. 
+This ensures that the minimum availability requirements are met and that your application remains available during the disruption.
+
+A Pod Disruption Budget can be defined using a YAML file or the kubectl command-line tool. It is associated with a set of pods using labels and selectors. You can 
+also define multiple PDBs for a set of pods to specify different availability requirements for different scenarios.
+
+In summary, a Pod Disruption Budget is a Kubernetes feature that allows you to define the minimum availability requirements for a set of pods during a disruption. 
+By setting a PDB, you can ensure that your application remains available during planned or unplanned disruptions and that Kubernetes will not terminate more pods 
+than necessary.
+
+Here is an example of a Pod Disruption Budget YAML file:
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: my-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: my-app
+This Pod Disruption Budget specifies that at least 2 replicas of the pods with the app: my-app label selector should be available at all times. If a disruption 
+occurs, Kubernetes will not terminate more than one replica at a time, and will wait until a replacement replica is available before terminating another replica.
+
+You can apply this PDB to a set of pods with the app: my-app label selector using the following command:
+kubectl apply -f my-pdb.yaml
+By setting a Pod Disruption Budget, you can ensure that your application remains available during planned or unplanned disruptions, and that Kubernetes will 
+not terminate more pods than necessary to meet the minimum availability requirements.
+
+5) How you give access to k8s cluster? 
 
 How does my ec2 instance access to k8s cluster? 
 
@@ -19,5 +106,11 @@ How does my application running in ec2 instance access to s3 service?
 How to block incoming traffic for single ec2 instance? suppose I've 10 instances, I need to block for single instance
 
 Write script to display square of the number from 1 to 10
+#!/bin/bash
+for ((i=1;i<=10;i++))
+do
+    echo "The square of $i is $((i*i))"
+done
+
 
 Some other scenario based questions
