@@ -9,10 +9,48 @@ PWC 1st round
 7. what will be in there in state file
 8.  in ansible variable which can override others on highest priority
 9. how do you encrypt sensitive data in ansible  
-10. why ansible is much popular with compaire to other tools
+In Ansible, sensitive data such as passwords, API keys, and other credentials should be encrypted to protect them from unauthorized access. Ansible provides a feature called "Vault" that allows you to encrypt sensitive data.
+
+Here are the steps to encrypt sensitive data in Ansible using Vault:
+
+Create a vault file: Create a new file with a .vault extension to store your encrypted data. You can create this file using the ansible-vault create command, which will prompt you to enter and confirm a password. For example:
+
+lua
+Copy code
+ansible-vault create mysecrets.vault
+Edit the vault file: Open the vault file in your favorite text editor and add your sensitive data in plain text. For example:
+
+makefile
+Copy code
+my_password: supersecret
+api_key: 12345
+Encrypt the vault file: Encrypt the vault file using the ansible-vault encrypt command. For example:
+
+Copy code
+ansible-vault encrypt mysecrets.vault
+This will encrypt the contents of the file using the password you entered in step 1.
+
+Use the vault file in your playbook: To use the encrypted data in your playbook, you need to specify the path to the vault file and the password to decrypt it. You can do this by adding the --ask-vault-pass option to the ansible-playbook command, which will prompt you to enter the vault password. For example:
+
+python
+Copy code
+ansible-playbook myplaybook.yml --ask-vault-pass
+You can also specify the vault password in a file or environment variable using the --vault-password-file or --vault-password-env options, respectively.
+
+Use the encrypted variables in your playbook: To use the encrypted variables in your playbook, you need to wrap them with the vault filter. For example:
+
+yaml
+Copy code
+- name: Set the password
+  debug:
+    msg: "The password is {{ my_password | vault }}"
+This will decrypt the value of my_password and display it in the output.
+
+By following these steps, you can encrypt sensitive data in Ansible using Vault to protect it from unauthorized access. It's important to keep the vault password secure and to limit access to the encrypted files to only those who need it.
+10. why ansible is much popular with compare to other tools
 ANS:  ansible is agentless, with other tools we need to install agent in all machine 
 11. how ansible work . how install or tell me ansible configuration
-12. how to do the passordless connection configartion 
+12. how to do the passwordless connection configartion 
 13. master slave configuration 
 14. did you configure window slave 
 15. have you heard about JNLP agent java network luanch protocal
