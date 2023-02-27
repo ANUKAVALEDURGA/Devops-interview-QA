@@ -5,5 +5,72 @@
 how to take out this alert message.
 5. there is one service running on all nodes and master name that.
 6.how to get/achieve DNS in K8S.
+how to get/achieve DNS in K8S
+In Kubernetes, you can use DNS (Domain Name System) to discover and communicate with other services running within the cluster. DNS allows you to use service 
+names instead of IP addresses to connect to other services, which makes it easier to manage and scale your application.
+
+To achieve DNS in Kubernetes, you need to ensure that the kube-dns service is running in your cluster. This service provides DNS resolution for Kubernetes services 
+and is responsible for mapping service names to IP addresses.
+
+Once kube-dns is running, you can use the service name to access other services in your cluster. For example, if you have a service named my-service running in 
+your cluster, you can access it using the DNS name my-service.default.svc.cluster.local.
+
+Here's an example of how you can use DNS in Kubernetes to connect to a service:
+
+Create a deployment and service for your application:
+yaml
+Copy code
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-image
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+Use the service name to connect to your application from another pod:
+yaml
+Copy code
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-client
+spec:
+  containers:
+  - name: my-client
+    image: my-image
+    command: [ "curl", "http://my-service.default.svc.cluster.local" ]
+In this example, the my-client pod runs a command to connect to the my-service service using its DNS name. This allows the pod to communicate with the 
+my-app deployment running in the cluster.
+
+
+
+
+
 7. which CI/CD tool you are familier with 
 8. tell me about youself
