@@ -49,6 +49,8 @@ ansible playbook
         mode: 0644
 
 4) What is ASG 
+An Auto Scaling Group is a group of resources such as virtual machines, containers, or other cloud resources that can be automatically scaled up or down based 
+on demand.
 An Auto Scaling group contains a collection of Amazon EC2 instances that are treated as a logical grouping
  for the purposes of automatic scaling and management. 
 An Auto Scaling group also enables you to use Amazon EC2 Auto
@@ -60,7 +62,7 @@ An Auto Scaling group also enables you to use Amazon EC2 Auto
 No
 7) How do you increase resource in ec2 instance 
 horiontal auto scaling
-				8) How do you automate the log collection of docker container 
+8) How do you automate the log collection of docker container ?
 
 Docker automatically aggregates container standard output and error streams (stdout/stderr) 
 into log feeds which are retained by the Docker daemon. 
