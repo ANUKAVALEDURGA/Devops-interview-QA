@@ -3,21 +3,260 @@ Company:: Pega Software Systems
 1) Tell me about your current organization and day-2-day activities
 2) Write terraform script for ASG (Auto Scaling Group) AWS with minimum 3 ec2 instances 
 3) Write shell script to push a script/code to 5 target servers 
+#!/bin/bash
+# Replace the following with the path to your script/code file
+SCRIPT_FILE=/path/to/script.sh
+
+# Replace the following with the list of target server IPs or hostnames
+SERVERS="user1@server1 user2@server2 user3@server3 user4@server4 user5@server5"
+
+# Loop through each target server and copy the script file
+for SERVER in $SERVERS; do
+  echo "Copying script file to $SERVER..."
+  scp $SCRIPT_FILE $SERVER:/remote/path/to/script.sh
+done
+
+echo "Done."
+
 4) What is ASG 
 5) Difference between Horizontal and Vertical autoscaling
+Horizontal autoscaling involves adding more instances or servers to the existing pool of resources to increase the capacity of the system. In other words, 
+horizontal scaling increases the number of resources running in parallel to distribute the workload. For example, if an application running on two instances 
+is experiencing high traffic, horizontal autoscaling can add additional instances to handle the extra load. This approach is typically used when the 
+application architecture is designed to be scalable horizontally and can handle the addition of more instances.
+
+Vertical autoscaling involves increasing the resources available to a single instance or server by adding more CPU, memory, or storage capacity to the 
+existing instance. In other words, vertical scaling increases the capacity of the existing resources. For example, if an application running on a single instance 
+is experiencing high CPU usage, vertical autoscaling can add more CPU cores or increase the memory of the instance to handle the extra load. This approach is 
+typically used when an application is not designed to be horizontally scalable, or when adding more instances is not feasible due to limitations such as 
+database connections.
+
+In summary, horizontal autoscaling increases the number of resources to handle additional traffic, while vertical autoscaling increases the capacity of 
+existing resources to handle additional workload. Both approaches can be used in conjunction to provide a flexible and efficient scaling solution for applications 
+and services.
 6) In vertical autoscaling can you increase resources without downtime ?
-7) How do you increase resource in ec2 instance 
+Stop the instance: Before resizing the instance, you need to stop it. This can be done through the EC2 console or using the AWS CLI. Note that 
+stopping an instance will cause any applications running on it to be unavailable until the instance is restarted.
+
+Choose a new instance size: Once the instance is stopped, you can choose a new instance size with increased memory or CPU capacity from the list of available 
+instance types. You can also choose to modify the storage capacity and instance network settings, if needed.
+
+Start the instance: After selecting the new instance type, start the instance again. This will launch a new instance with the updated resources and migrate any 
+data from the old instance to the new one. Once the new instance is running, you can connect to it using the same IP address or hostname as before.
+
+Note that there may be some brief downtime during the instance stop and start process, but it should be minimal. Additionally, not all EC2 instance types can 
+be resized, so make sure to check the instance type documentation to see if resizing is supported.
+
+7) How do you increase resource in ec2 instance ?
+
+Here are some common methods:
+
+Instance resizing: You can resize an EC2 instance by changing its instance type to one with more CPU, memory, or storage capacity. This can be done through the 
+AWS Management Console or through the AWS CLI. Note that instance resizing requires the instance to be stopped temporarily, and may cause some downtime during 
+the process.
+
+Adding more instances: You can add more EC2 instances to an existing Auto Scaling Group to handle increased traffic or workload. This can be done manually or 
+through automated scaling policies that add or remove instances based on demand.
+
+Load balancing: You can use a load balancer to distribute traffic across multiple EC2 instances, allowing you to handle more traffic without overloading any 
+single instance. This can be done using the Elastic Load Balancing service in AWS.
+
+Elastic Block Store (EBS) volume resizing: If you need to increase the storage capacity of an EC2 instance, you can resize the attached EBS volumes to 
+provide additional storage space. This can be done through the AWS Management Console or using the AWS CLI. Note that EBS volume resizing can be performed while 
+the instance is running, without causing downtime.
+
+Elastic File System (EFS): If you need to increase storage capacity and also require shared access across multiple instances, you can use EFS. EFS provides 
+scalable, elastic file storage that can be accessed from multiple EC2 instances simultaneously.
+You can resize an Amazon Elastic Block Store (EBS) volume in AWS using the AWS Management Console, AWS CLI, or AWS SDKs. Here are the general steps for resizing an 
+EBS volume:
+
+Stop all applications using the EBS volume: Before resizing an EBS volume, ensure that all applications using it are stopped to avoid data loss.
+
+Create a snapshot of the existing EBS volume: Creating a snapshot of the existing EBS volume is a best practice before resizing. This snapshot can be used to 
+restore the data if anything goes wrong during the resizing process.
+
+Resize the EBS volume: To resize the EBS volume, select the volume in the EC2 console or using the AWS CLI, and choose the 'Modify Volume' option. Specify the new 
+size for the EBS volume and confirm the changes. The resizing process may take some time, depending on the size of the volume.
+
+Restart the instance or detach and reattach the volume: Once the EBS volume resizing process is complete, you can either restart the EC2 instance or detach 
+and reattach the volume to the instance for the new size to take effect.
+
+Verify the new EBS volume size: After restarting the instance or reattaching the volume, verify that the new EBS volume size is reflected correctly.
 8) How do you automate the log collection of docker container 
+Deploy a logging agent or sidecar container: Deploy a logging agent or sidecar container in your Kubernetes cluster to collect container logs. 
+A logging agent is a separate pod that runs alongside your application pods and collects their logs. A logging sidecar container is a container that runs in the 
+same pod as your application container and collects its logs.
+Configure the logging agent or sidecar container: Configure the logging agent or sidecar container by specifying the logging driver in the container spec. For 
+example, if you're using Fluentd as your logging agent, you can specify the logging driver in the container spec as follows:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: my-image
+    volumeMounts:
+    - name: logs
+      mountPath: /var/log/myapp
+  - name: fluentd
+    image: fluent/fluentd
+    volumeMounts:
+    - name: logs
+      mountPath: /var/log/myapp
+    env:
+    - name: FLUENTD_ARGS
+      value: -c /fluentd/etc/fluentd.conf
+  volumes:
+  - name: logs
+    emptyDir: {}
+This configuration sends container logs to Fluentd.
+
+View the logs: After configuring the logging agent or sidecar container, you can view the logs using the logging solution's interface or API. For example, 
+if you're using Elasticsearch, you can view the logs using Kibana.
+
+If you are using Prometheus and Grafana for monitoring and visualization, you don't necessarily need a sidecar container for sending logs. Prometheus is 
+primarily designed for metric monitoring and it does not collect logs natively. However, it is possible to use Prometheus to scrape log data from your 
+application containers using an exporter, such as the Prometheus Log Exporter or the Fluentd Prometheus Exporter. These exporters can be deployed as 
+separate containers alongside your application containers or as a separate pod in the same namespace.
+
+On the other hand, Grafana is a visualization tool that can display metrics and logs from various data sources, including Prometheus. If you are using Grafana 
+to visualize your logs, you can configure it to display logs collected by Prometheus using the Loki data source. Loki is a log aggregation system that integrates 
+with Prometheus to provide a unified view of your metrics and logs. It uses the same labels as Prometheus to query and filter log data, making it easy to 
+correlate logs with metrics.
 9) How do you automate the log collection on k8s pods 
 10) what is the command for k8s logs ?
-11) What are the states of docker container 
-12) I have 2 images, one image is used to deploys one container, 2nd image is used to deploy 2nd container, 2nd container is failing, what is the state of the 2nd container 
+11) What are the states of docker container ?
+Docker container has several states throughout its lifecycle. The states of a Docker container are as follows:
+
+Created: The container is created but not started yet.
+
+Running: The container is running and its main process is active.
+
+Paused: The container is paused, and its processes are suspended.
+
+Restarting: The container is in the process of being restarted.
+
+Exited: The container has stopped running, either because its main process has completed or because it has been stopped manually.
+
+Dead: The container has exited unsuccessfully, and Docker cannot restart it.
+
+You can view the current state of a Docker container using the docker ps command. The output will show you the container's state as well as other information such 
+as its ID, name, image, and status. If a container is not running, you can use the docker container ls -a command to view all containers, including those that are 
+not currently running, and check their state.
+
+12) I have 2 images, one image is used to deploys one container, 2nd image is used to deploy 2nd container, 2nd container is failing, what is the state of the 
+2nd container 
+If the second container is failing to deploy, it is likely in the "Exited" state. This means that the container has stopped running, either because its main 
+process has completed or because it has been stopped manually.
+
+To confirm the state of the second container, you can use the docker ps -a command to view all containers, including those that are not currently running. Look for 
+the container based on its name or ID, and check the "STATUS" column to see if it shows "Exited".
+
+Once you have confirmed the state of the container, you can use the docker logs command to view the logs of the container and identify the cause of the failure. 
+For example:
+
+docker logs <container-id>
+This will display the logs of the container, including any error messages or stack traces that may help diagnose the issue.
 13) How will you check the states of the containers 
 14) How will you identify pods based on the namespace 
+kubectl get pods -n <namespace-name>
 15) Do you know Python 
 16) How enthusiastic are you to learn scripting and python ? 
 17) You said you have worked on end-2-end automated deployment - can you explain one scenario where you deployed the application end-2-end 
+Sure, I can give an example of an end-to-end automated deployment that I have worked on.
+
+In a previous project, I was responsible for deploying a web application that consisted of a frontend written in Angular and a backend API written in Node.js. 
+The deployment was automated using Jenkins and Kubernetes, and the pipeline involved several stages, including build, test, and deployment.
+
+Here's a high-level overview of the deployment process:
+
+Code changes were pushed to a Git repository, which triggered a Jenkins build.
+
+The Jenkins build job checked out the latest code changes, built the frontend and backend Docker images, and pushed them to a Docker registry.
+
+The build job then triggered a set of integration tests, which validated that the application was functioning correctly.
+
+If the integration tests passed, the Jenkins deployment job was triggered, which deployed the application to a Kubernetes cluster.
+
+The deployment job used Helm charts to manage the deployment, which allowed us to define and manage the deployment configuration in a standardized way.
+
+The Kubernetes deployment involved several steps, including rolling out new pods, scaling the deployment to the desired number of replicas, and exposing the 
+frontend and backend services using Kubernetes Services.
+
+Once the deployment was completed, the Jenkins job sent notifications to the team via Slack, indicating that the deployment was successful.
+
+This automated deployment process allowed us to deploy changes to our web application quickly and reliably, without manual intervention. It also allowed us to 
+easily roll back changes in case of issues, and to ensure that our application was always running with the latest code changes.
+
 18) How will you deploy containers using Jenkins
+
+To deploy containers using Jenkins, you can use a combination of Jenkins Pipeline and Kubernetes plugins. Here's a general overview of the process:
+
+Create a Jenkins Pipeline script: First, you need to create a Jenkins Pipeline script that defines the deployment steps. This script can be written in Groovy or 
+in YAML using the Jenkins declarative syntax.
+
+Set up Kubernetes credentials: In order to interact with the Kubernetes cluster, you need to set up the Kubernetes credentials in Jenkins. This involves 
+creating a Kubernetes service account and configuring the Kubernetes credentials in Jenkins.
+
+Install the Kubernetes plugin: You need to install the Kubernetes plugin in Jenkins, which allows Jenkins to interact with the Kubernetes API.
+
+Define the deployment steps: In your Pipeline script, define the deployment steps, such as building the Docker image, pushing the image to a container registry, 
+and deploying the image to the Kubernetes cluster. You can use Kubernetes manifest files or Helm charts to define the deployment configuration.
+
+Trigger the Pipeline: Finally, you can trigger the Pipeline either manually or automatically using a webhook or a scheduled job.
+
+Here's an example of a Jenkins Pipeline script that deploys a Docker container to a Kubernetes cluster:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build image') {
+            steps {
+                sh 'docker build -t my-image:latest .'
+                sh 'docker push my-registry/my-image:latest'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withKubeConfig([credentialsId: 'my-kube-creds', serverUrl: 'https://my-kube-api-server']) {
+                    sh 'kubectl apply -f deployment.yaml'
+                }
+            }
+        }
+    }
+}
+In this example, the Pipeline script first builds a Docker image and pushes it to a container registry. Then, it deploys the image to the Kubernetes cluster 
+using a Kubernetes deployment manifest defined in deployment.yaml. The withKubeConfig block configures the Kubernetes credentials to use for the deployment.
+
+Note that this is just a simple example, and in practice, you may need to add additional steps such as testing, rolling updates, or health checks to your 
+deployment Pipeline script.
+
+
+
 19) What is kubeconfig , what does it contain ? 
-		Me:	I answeres the token, username, password to connect to the cluster 
+
+kubeconfig is a file used by the kubectl command-line tool to authenticate and access a Kubernetes cluster. The kubeconfig file contains information about the cluster, such as the cluster name, the API server URL, and the credentials needed to access the cluster.
+
+Here are the main components of a kubeconfig file:
+
+Clusters: The clusters section defines the Kubernetes cluster, including the cluster name, the API server URL, and the CA certificate used to authenticate the API server.
+
+Users: The users section defines the authentication credentials used to access the Kubernetes cluster, such as usernames, passwords, or client certificates.
+
+Contexts: The contexts section defines the context for the current user, including the cluster and user to use for authentication.
+
+Current Context: The current-context field specifies which context to use by default.
+
+The kubeconfig file can be used to switch between different Kubernetes clusters and contexts, making it easy to manage multiple clusters from a single 
+command-line interface. It is also possible to merge multiple kubeconfig files into a single file, making it easier to manage configurations across 
+multiple environments and teams.
+
+To use a kubeconfig file with kubectl, you can set the KUBECONFIG environment variable to point to the file path or use the --kubeconfig flag to specify the file 
+path explicitly. When kubectl is invoked, it will read the kubeconfig file to determine which Kubernetes cluster to access and which credentials to use 
+for authentication.
+		Me:	I answered the token, username, password to connect to the cluster 
 		Inteviewer: Are you sure ? ??
