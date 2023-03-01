@@ -2,11 +2,28 @@
        
 	  AWS Auto Scaling monitors your applications and automatically adjusts capacity to maintain 
 steady, predictable performance at the lowest possible cost. 
-    Horizontal Auto scale: it is used to scale the instances, if the CPU Utilization is meet the thershold 
+    Horizontal Auto scale: it is used to scale the instances, if the CPU Utilization is met the thershold 
 	Vertical Auto Scale:it is used to scale the Power for the existing instance
       
 2) User has setup an autoscaling group but group fails to launch instance for 24 hours, what happens in this scenario ? How can we resolve it ?
       we have to check the instance configuration
+      
+This can happen due to a variety of reasons, such as insufficient capacity in the chosen availability zones, issues with your launch configuration or 
+launch template, or other errors.
+
+To resolve this issue, you can take the following steps:
+
+Verify your Autoscaling group configuration: Check your Autoscaling group configuration to ensure that it is properly configured with the correct launch 
+configuration, availability zones, and scaling policies. Make sure that the desired capacity is set to a value that matches your requirements.
+
+Check for capacity constraints: Verify that there is enough capacity in your selected availability zones to launch instances. If capacity is constrained, you may 
+need to adjust your launch configuration or choose different availability zones.
+
+Check your launch configuration or launch template: Ensure that your launch configuration or launch template is valid and has the required permissions to 
+launch instances. Check for any errors or warnings in the logs.
+
+Review your scaling policies: Review your scaling policies to ensure that they are appropriate for your workload and traffic patterns. Adjust your policies as 
+needed to ensure that your Autoscaling group can scale up or down as required.
 
 	    1. The requested configuration is currently not supported.
         2. The security group <name of the security group> does not exist. Launching EC2 instance failed.
@@ -16,13 +33,16 @@ steady, predictable performance at the lowest possible cost.
 	  
 	  
 3) Can we have a backup of EBS volume ?
-       yes,using snapshort
+       yes,using snapshot
 4) If we delete this snapshot how to retrive it back ?
-       we have an option in AWS we can keep the deleted snapshorts and AMI in AWS recylic bin
+       we have an option in AWS we can keep the deleted snapshots and AMI in AWS recylic bin
 	   with retention period of time 
-	   
-5) Diff between RDS & Dynamo DB ?
 
+Use EBS snapshot recovery: AWS provides a feature called EBS snapshot recovery that allows you to recover snapshots that were deleted in the past 30 days. 
+To use this feature, you need to contact AWS support and provide them with the ID of the deleted snapshot.   
+5) Diff between RDS & Dynamo DB ?
+RDS is a relational database service that supports SQL queries and stores data in tables with a defined schema. DynamoDB is a NoSQL database service that supports 
+key-value and document data models, and has a flexible schema that allows for dynamic data types and attributes.
     RDS:                                   Dynamo db:
 
 	Relational data base                 Fully managed key-value and document (NoSQL) database
@@ -32,14 +52,24 @@ steady, predictable performance at the lowest possible cost.
      	secure data in transit.
 	
 6) What is edge location ?
+An edge location is a point of presence (PoP) in a content delivery network (CDN) that is designed to improve the performance and reduce the latency of 
+content delivery. An edge location is essentially a cache server that stores frequently accessed content closer to the end user, so that the content can be 
+delivered more quickly and efficiently.
+
+Edge locations are typically located in densely populated areas, such as cities or regions with high concentrations of internet users. They are often deployed 
+in colocation facilities or other data centers that have high-speed connectivity to the internet backbone.
+
+When a user requests content from a website or other online service, the request is routed to the nearest edge location, where the content is cached. If the content 
+is not already in the cache, the edge location retrieves the content from the origin server and stores it in the cache for future requests. When subsequent 
+users request the same content, the edge location can deliver it directly from the cache, without needing to retrieve it from the origin server again.
           An edge location is where end users access services located at AWS, 
 		  the cloud computing division of US-headquartered Amazon. 
 		  They are located in most of the major cities around the world
 		  and are specifically used by CloudFront (CDN) to distribute content to end users to reduce latency
 		  
-7) Diff between Network load balance & application load balancer ?
+7) Diff between Network load balancer & application load balancer ?
 
- Network load balance: it mainly uses TLS/TCP/UDP traffic to  forward the request to the application through port number
+ Network load balancer: it mainly uses TLS/TCP/UDP traffic to  forward the request to the application through port number
 	                           here we can define the different ports for multiple paths to route the traffic.
 							   
  application load balancer: An Application Load Balancer makes routing decisions at the application layer (HTTP/HTTPS),
@@ -49,16 +79,24 @@ steady, predictable performance at the lowest possible cost.
 
 
 8) What is round robin ?
+Round robin is a load balancing algorithm that distributes requests across multiple servers in a rotating order. When a request is received, it is sent to the 
+next server in the rotation, and the rotation starts over again when all servers have been used. This helps to distribute the load evenly across all 
+servers, preventing any one server from becoming overloaded.
 
           Round robin is a process used for network communication and operating system load balancing. 
 		  A system that works in a round robin fashion distributes load based on the round robin algorithm.
       
 9) What is reverse proxy server ?
-
+When a client sends a request to a reverse proxy server, the proxy server forwards the request to the appropriate backend server based on the requested URL or 
+other criteria. The backend server then responds to the request, and the reverse proxy server forwards the response back to the client. This allows the client 
+to access multiple backend servers through a single point of contact, without revealing the actual IP address or location of the backend servers.
          Reverse proxy as the name suggests does the opposite of what a forward proxy can do.
 		  It takes requests from the user and forwards them to the host web servers acting as a load balancer
 		  
 10) What if load balancer gets failed?
+If you are using a highly available load balancer, such as an Amazon Elastic Load Balancer (ELB), then the load balancer is distributed across multiple 
+availability zones to provide automatic failover. If one availability zone or load balancer instance fails, the traffic is automatically routed to another 
+healthy instance in a different availability zone. This helps to ensure high availability and fault tolerance for your application.
      If one load balancer fails, the secondary picks up the failure and becomes active.
 	 They have a heartbeat link between them that monitors status.
      
@@ -67,16 +105,59 @@ steady, predictable performance at the lowest possible cost.
 	 A target generates an HTTP error
 	 The load balancer generates an HTTP error
 	 Clients cannot connect to an internet-facing load balancer
-     
+Health checks: Most load balancers have built-in health checks that periodically check the health of the backend servers. If a server fails a health check, 
+the load balancer can stop sending traffic to that server and mark it as unhealthy. You can monitor the status of the backend servers through the load 
+balancer's health check dashboard or API.
+
+Monitoring: You can use monitoring tools, such as Amazon CloudWatch, to monitor the health and performance of your load balancer. CloudWatch can track metrics 
+such as request count, latency, and error rate, and send alerts if certain thresholds are exceeded.
+
+Access logs: Load balancers often generate access logs that contain information about each request, including the client's IP address, the requested URL, and 
+the response code. You can use these logs to monitor traffic patterns and detect anomalies or errors.
+
+End-user feedback: End-users may report issues such as slow response times, error messages, or inability to access the application, which could indicate a 
+load balancer failure.
 12) What is sticky session ?
-        sticky session: it removes load balcer and it ensure that a user stick to particular server
+        sticky session: it removes load balancer and it ensure that a user stick to particular server
+Sticky session, also known as session affinity, is a mechanism used by load balancers to direct subsequent client requests to the same server that handled 
+their initial request. This is accomplished by storing information about the client's session, such as a session ID, and using that information to route 
+future requests to the same server.
+
+When a load balancer is configured with sticky session, it associates each client's session with a specific server for the duration of the session. This means that subsequent requests from the same client are always routed to the same server, which can be useful for applications that require stateful sessions or have long-running processes.
 		
 13) What is TCP load balancer ?
-      explain Network load balance
+      explain Network load balancer
+ A Network Load Balancer (NLB) is an Amazon Web Services (AWS) service that distributes incoming network traffic across multiple targets, such as EC2 instances,
+ containers, and IP addresses. NLB operates at the network layer (Layer 4) of the OSI model, and can handle millions of requests per second with ultra-low latency.
+
+NLB provides several benefits over other types of load balancers, such as Application Load Balancer (ALB) and Classic Load Balancer (CLB). Here are some key 
+features of NLB:
+
+High throughput and low latency: NLB is optimized for handling high volumes of traffic with minimal latency. It can scale to handle millions of requests per second 
+and support TCP, UDP, and TLS protocols.
+
+Support for static IP addresses: NLB provides a static IP address that can be used as a front-end for your applications. This allows you to maintain a consistent 
+IP address for your application, even if the underlying targets change.
           
 14) How can i copy files into target using ansible ?
        keep the files in file  dir of our role
 	     then use the command ansible-galaxy install <role_name>
+To copy files into a target using Ansible, you can use the copy module. Here's an example task that copies files from the files directory of your Ansible role to 
+the target machine:
+
+- name: Copy files to target
+  copy:
+    src: files/
+    dest: /path/to/destination/
+In this example, src is the path to the source directory containing the files you want to copy, and dest is the path to the destination directory on the 
+target machine.
+
+You can save this task in a separate file inside the tasks directory of your Ansible role, or you can include it directly in your role's main.yml file.
+
+Once you've created the task, you can run your Ansible playbook to copy the files to the target machine:
+
+ansible-playbook playbook.yml
+Make sure that your playbook includes the target host or group in its inventory, and that you have SSH access to the target machine with the correct credentials.
 		 
 15) What is terrafrom statefile ?
       Terraform stores information about your infrastructure in a state file.
@@ -87,8 +168,22 @@ steady, predictable performance at the lowest possible cost.
 	   curretly we are storing in AWS S3 bucket with help of Dynamo db
 	   
 17) I'm working on a terraform statefile and all of a sudden it got lock and im not able to make changes, why it got lock and how to unlock it ?
-         
-		 force-unlock
+       To unlock the state file, you will need to find the process or user that has acquired the lock and release it. This can typically be done by asking the 
+       person who locked the state file to release the lock, or by waiting for the lock to automatically expire.
+
+If you are unable to identify the user or process that has locked the state file, you can use the terraform force-unlock command to forcibly release the lock. 
+However, this should be used with caution as it can cause data loss or corruption if used incorrectly.
+
+To use terraform force-unlock, you need to provide the ID of the lock you want to release. You can find the ID of the lock by running the terraform state list command:
+
+terraform state list
+This will show a list of all resources in your Terraform state. Each resource will have a lock ID associated with it, which you can use with the terraform 
+force-unlock command:
+terraform force-unlock LOCK_ID
+This will forcibly release the lock on the state file. However, be aware that this can cause data loss or corruption if there are other processes or users 
+still working on the state file. Therefore, it's recommended to use terraform force-unlock only as a last resort when other methods of releasing the lock have failed.
+
+force-unlock
 		 
 18) Can terraform be used for onpremisis ?
           yes...
@@ -102,7 +197,8 @@ steady, predictable performance at the lowest possible cost.
 		  
 		  but we can't say i will get the exact thing but most of the changes will get
 		  there is no command or steps better than this.
-		  
+terraform destroy -target=aws_instance.example
+or s3 bucket as backend with versioning enabled , we can roll back.
 		  
 20) What is kuberneties POD ?
           K8 Pod is a smallest  object, it contains one or more containers
@@ -113,6 +209,12 @@ steady, predictable performance at the lowest possible cost.
 		   
 22) Can we run 2 or 3 applications inside a POD ?
                yes..but auto scalling and upgrades colud be a bit challenge
+Yes, it is possible to run 2 or 3 applications inside a single Kubernetes Pod. However, this is generally not recommended as it goes against the principle 
+of microservices architecture and can lead to a variety of issues such as scaling, resource allocation, and application dependencies.
+
+Kubernetes Pods are designed to run a single instance of a container, with the goal of creating a self-contained environment for the application. Running 
+multiple applications within a single Pod can lead to conflicts between the applications, as they may have different dependencies, resource requirements, and 
+scaling needs.
 			   
 23) How can we make containers communicate with each other ?
         using Cluster IP
@@ -155,17 +257,71 @@ steady, predictable performance at the lowest possible cost.
 		 
 35) Have you worked on API gateways ?
      yes.
-
+An API gateway is a tool that acts as a central entry point for clients to access multiple APIs. It helps to manage and secure APIs by providing features 
+like authentication, authorization, load balancing, and analytics. API gateways are commonly used in microservices architectures to simplify the management of APIs 
+and improve the overall performance and security of the API infrastructure.
+An API gateway is a layer of infrastructure that provides a centralized entry point for external clients to access and interact with a collection of APIs. 
+It serves as a reverse proxy that accepts incoming requests from clients and routes them to the appropriate API endpoint or service. 
+API endpoints are the URLs (Uniform Resource Locators) where clients can access specific resources or functionality exposed by an API. API endpoints are 
+typically designed to follow a consistent pattern or syntax that makes it easy for clients to understand and use them.
 
 
 Ness-
 
 1. Ansible playbook files.
-2 if you want to run a specific IP which is not defined in the grp how will you define in inventory file.
+2 if you want to run a specific IP which is not defined in the group how will you define in inventory file.
+You can define a specific IP address in the Ansible inventory file by using the "all" group and specifying the IP address as a host. Here's an example:
+[all]
+192.168.1.100
+In this example, we have defined a single host with IP address 192.168.1.100 in the "all" group. You can replace this IP address with the IP address of the host 
+that you want to target.
+
+Once you have defined the host in the inventory file, you can target it in your Ansible playbooks by using the host's IP address instead of a group name. For example:
+---
+- hosts: 192.168.1.100
+  tasks:
+    - name: Ping the host
+      ping:
+
 3. Ssl certification how can you give Ssl certification in load Balancer.
+Upload the SSL certificate to AWS Certificate Manager (ACM) - If you obtained the SSL certificate from a trusted CA, you can upload it to ACM. Otherwise, you 
+can create a new certificate in ACM using the self-signed certificate.
+
+Create an HTTPS listener in the Load Balancer - Create a listener that listens for incoming HTTPS traffic on the desired port (usually 443) and protocol. In 
+the listener configuration, select the SSL certificate from ACM that you want to use for secure communication.
+
+Associate the listener with the target group - Associate the listener with the target group that contains the backend instances that will receive the traffic from 
+the Load Balancer.
 4 how is pod communication happens.
 5 can we add a vpc later to a Load balancer and which one?
 6 storage classes.
+Here are the storage classes available in Amazon S3:
+
+S3 Standard: S3 Standard is the default storage class and is designed for frequently accessed data that requires high durability, availability, and performance. It 
+is suitable for a wide range of use cases, including big data analytics, mobile and gaming applications, content distribution, and backup and recovery.
+
+S3 Intelligent-Tiering: S3 Intelligent-Tiering is designed for data with unknown or changing access patterns. It automatically moves objects between two access 
+tiers based on changing access patterns and provides the performance of S3 Standard with the cost of S3 Standard-Infrequent Access.
+
+S3 Standard-Infrequent Access: S3 Standard-Infrequent Access is designed for long-lived, infrequently accessed data that requires rapid access when needed. It is 
+ideal for backups, disaster recovery, and archival data.
+
+S3 One Zone-Infrequent Access: S3 One Zone-Infrequent Access is designed for infrequently accessed data that can be recreated if lost, such as non-critical backups 
+and secondary copies of data. It is similar to S3 Standard-Infrequent Access, but data is stored in a single Availability Zone instead of across multiple zones, 
+which reduces cost.
+
+S3 Glacier: S3 Glacier is a low-cost storage class designed for long-term storage of data that is rarely accessed. Data is stored in Glacier vaults, and retrieval
+times can range from minutes to hours.
+
+S3 Glacier Deep Archive: S3 Glacier Deep Archive is the lowest cost storage class and is designed for long-term archival data that is accessed once or twice a year.
+Retrieval times can take up to 12 hours.
+
+Each storage class has its own pricing structure, with costs based on the amount of data stored, the frequency of access, and the region where the data is stored. 
+It's important to choose the right storage class based on your specific needs to optimize cost and performance.
+
 7. Terraform taint. And destroy difference
+In Terraform, terraform taint marks a specific resource as tainted, which means that Terraform will destroy and recreate that resource on the next apply. 
+terraform destroy destroys all the resources created by Terraform for a particular configuration.
 8. If there is team a which did some configuration in aws and now team b wants to do the same resources how that can be done?
+using terraform workspace
 Many more
