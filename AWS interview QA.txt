@@ -10,12 +10,38 @@
 			○ NAT Gateway
 			○ Elastic IP 
 		
-		Setting up VPC  - yes, explain the detailed process of creating subent, IGW, assigning subnet to routing table via subnet association, NAT gateway creation etc… etc..
-		
+		Setting up VPC  - yes, explain the detailed process of creating subent, IGW, assigning subnet to routing table via subnet association, 
+		NAT gateway creation etc… etc..
+Define your IP address range: Define a range of IP addresses that will be used in your VPC. This range should not overlap with any existing IP ranges that 
+your organization may be using.
+
+Create subnets: Create one or more subnets within your VPC, each with its own IP address range. You can create public and private subnets depending on whether or 
+not you want the subnet to be accessible from the internet.
+
+Set up routing: Create routing tables for each subnet in your VPC. You'll need to specify how traffic is routed between subnets and out to the internet. You can 
+create internet gateways and attach them to your VPC to enable internet connectivity.
+
+Launch instances: Once your VPC is set up, you can launch instances within your subnets. You can choose which subnet an instance is launched in and whether it 
+should have a public IP address or not.
+
+Configure security: You'll need to set up security groups to control access to your instances. You can define inbound and outbound rules to allow or deny traffic 
+from specific IP addresses or ranges.
+
+Use additional services: Depending on your needs, you may need to use additional services such as load balancers, databases, or storage solutions. These services 
+can be integrated into your VPC to provide a fully functional application environment.
 	2  * Where you will set the Route Table ?
 		Under VPC we will set route table 
 		We will set route table for both private subnet and public route table (or) based on the subnet requirement
-		
+Open the Amazon VPC console.
+In the navigation pane, choose "Route Tables".
+Choose "Create Route Table" and specify a name for your route table.
+Select the VPC you want to associate the route table with.
+Choose "Create".
+After creating the route table, choose the route table in the console and choose "Edit routes".
+Add the required routes for your VPC, such as routes to your internet gateway, VPN, or other network connectivity.
+Associate your subnets with the route table. You can associate a subnet with a route table either when you create the subnet or by modifying the subnet's route 
+table association.
+Save your changes.
 	3  * Services used in AWS ?
 			○ IAM
 			○ EC2
@@ -32,17 +58,42 @@
 			○ CloudFormation 
 		
 	4  * How can you make any S3 bucket as private ?
+Open the Amazon S3 console.
+Choose the bucket that you want to make private.
+Choose the "Permissions" tab.
+Under the "Block public access" section, check the box next to "Block all public access".
+Save your changes.
+Under the "Access control list" section, ensure that the bucket's access control list is set to private. This will prevent unauthorized access to the bucket and 
+its objects.
+In the "Bucket policy" section, remove any existing policies that allow public access to the bucket or its objects.
+Save your changes.
 			Bydefault S3 bucket is private 
 			To make it public  { S3 bucket --> Permission --> Uncheck "Block all public access" } 
 
-	5  * Cross region replication ? how you apply it ? will it copy automatically ?  -- Do it yourself , try to configure yourself to understand it better 
+5  * Cross region replication ? how you apply it ? will it copy automatically ?  -- Do it yourself , try to configure yourself to understand it better 
+Once you have set up cross-region replication, Amazon S3 will automatically replicate the objects from the source bucket to the destination bucket. Any new 
+objects that are added to the source bucket will be replicated to the destination bucket automatically. The replication process is asynchronous, so there may be 
+some delay between the time the object is added to the source bucket and the time it is replicated to the destination bucket.
+Open the Amazon S3 console.
+Choose the source bucket that you want to replicate.
+Choose the "Management" tab.
+Choose "Replication".
+Choose "Add rule" to create a new replication rule.
+Choose the destination bucket in a different region where you want to replicate the objects
+Configure replication settings, including the replication priority, storage class, and IAM role.
+Save your changes
 
-			○  Cross-Region replication --> Having 2 S3 buckets on 2 different region and data written in source S3 bucket is replicated on destination S3 bucket
-			○  Will it copy automatically ? --> Yes, once replication is enabled, data is copied automatically on destination S3 but for only data which is written after the replication is configured, data present in source S3 bucket prior to replication will not be made available/copied automatically on destination S3 bucket 
+○  Cross-Region replication --> Having 2 S3 buckets on 2 different region and data written in source S3 bucket is replicated on destination S3 bucket
+○  Will it copy automatically ? --> Yes, once replication is enabled, data is copied automatically on destination S3 but for only data which is written after 
+the replication is configured, data present in source S3 bucket prior to replication will not be made available/copied automatically on destination S3 bucket 
 
 	7  * Read replica
 			AWS RDS Read Replica is creating one (or) more read only copies of your database in your existing AWS region (or) in a different AWS region 
+A read replica is a copy of a database that is created for the purpose of offloading read traffic from the primary database. It is a common practice in 
+database systems to replicate the data to improve availability, scalability, and reliability.
 
+Read replicas are typically used in scenarios where the primary database is experiencing heavy read traffic, which can cause performance issues. By 
+offloading some of the read traffic to a replica, the primary database is able to better handle the remaining read and write traffic.
 	10 * How to you manage credentials ?
 			AWS Secrets Manager
 
@@ -58,7 +109,8 @@
 	14 * EKS ?
 		Elastic Kubernetes Service --> need to go through	
 
-	15 * VPC ? suppose I have a server, need to download the packages from the internet, but sever should not be accessed directly from outside ? how you can do that
+	15 * VPC ? suppose I have a server, need to download the packages from the internet, but sever should not be accessed directly from outside ? how you can 
+	do that
 			NAT Gateway  { check Bastion Host also } 
 
 	16 * 2 AWS accounts, my EC2 of 1 account should talk to my another EC2 ? How ?
@@ -75,8 +127,10 @@
 
 	18 * Cross region Route53 ?
 			○ Answer is Route53 Resolver, inbound endpoints, outbound endpoint 
-			○ Explanation is here --> https://aws.amazon.com/blogs/architecture/using-route-53-private-hosted-zones-for-cross-account-multi-region-architectures/
-		
+	○ Explanation is here --> https://aws.amazon.com/blogs/architecture/using-route-53-private-hosted-zones-for-cross-account-multi-region-architectures/
+	To use Route53's cross-region functionality, customers can create a latency-based routing policy. This policy will route traffic to the AWS region with 
+	the lowest latency for the user's location. Route53 will monitor the latency between the user's location and the AWS regions hosting the application, 
+	and automatically adjust the DNS response to route traffic to the optimal region.
 	19 * Health checks in Route53
 			○ Monitor the health and performance of the endpoints
 			○ Create health check to monitor inbound/outbound endpoints 
@@ -85,9 +139,13 @@
 	20 * DualStack configuration in Route53  -- Need to check the configuration yourself and get comfortable
 			Both IPv4 and IPv6  records are returned for an EC2 classic instance but dualstack DNS 
 			Configuration needs to be checked
+	DualStack configuration in Route53 is a feature that allows customers to create a single DNS record that can be used to route traffic to both IPv4 and 
+	IPv6 endpoints. This is particularly useful for customers who have applications that support both IPv4 and IPv6 and want to ensure that traffic is 
+	properly routed to the appropriate endpoint.
 
 	21 * what is S3 and why customer choose S3 ?
-			S3 (Simple Storage Service) is an Object Oriented Storage, we can store any file, any amount of data, anytime from anywhere on the web as an "Object"
+	S3 (Simple Storage Service) is an Object Oriented Storage, we can store any file, any amount of data, anytime from anywhere on the web as 
+	an "Object"
 			Why S3:
 				Easily accessible from anywhere (URL can be accessed by end user)
 				Any amount of data can be written to it 
@@ -116,7 +174,8 @@
 			
 	25 * why we need ELB & how you select which type of loadbalancer suitable for my application.
 			• ELB - Elastic Load Balancers , 
-			• we need load balancers to balancer the requests coming to the application servers (or) balance the load of the requests asked to service by the application servers
+			• we need load balancers to balancer the requests coming to the application servers (or) balance the load of the requests asked to service 
+			by the application servers
 									– (or) - 
 			• It automatically distributes incoming application traffic and scales resources to meet traffic demands 
 		
@@ -129,13 +188,20 @@
 			Cloudwatch --> It collects logs, events and metrics for all AWS resources 
 			Cloudtrail --> It helps in auditing, security monitoring of user activity and API useage 
 	
-	31 * customer has 50 (or) 100 odd aws accounts they are looking for a solution so that each and every single vpc can communicate with each other how you are going to establish that connectivity?
+	31 * customer has 50 (or) 100 odd aws accounts they are looking for a solution so that each and every single vpc can communicate with each other how you 
+	are going to establish that connectivity?
 	
 		Using VPC peering along with cross-account role
 		Using AWS CloudFormation and creating templates having restrictive policies
 		https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/peer-with-vpc-in-another-account.html
+		
+	 Another approach is to use AWS Transit Gateway, which is a service that allows you to connect multiple VPCs together and enables transitive routing 
+	 between VPCs. With Transit Gateway, you can connect VPCs in different accounts and regions to create a global network that spans multiple accounts 
+	 and regions.
 	 
-    32 * customer has a physical side production environment (or) workloads are running on aws there is 1 particular Ip/CIDR which is continuously hitting their environment multiple times in a day they are suspecting that a malicious activity they are asking you to block any kind of a traffic from a Ip/CIDR how you will going to block them?
+    32 * customer has a physical side production environment (or) workloads are running on aws there is 1 particular Ip/CIDR which is continuously hitting 
+    their environment multiple times in a day they are suspecting that a malicious activity they are asking you to block any kind of a traffic from a Ip/CIDR how 
+    you will going to block them?
 	
 		By adding the ip/CIDR in NACL inbound traffic rule to DENY 
 
@@ -152,8 +218,9 @@
 		Accessing the EC2 instance even if you loose the pem file is rather easy.
 		1. First, create a new instance by creating new access file, call it 'helper' instance with same region and VPC as of the lost pem file instance.
 		2. Now stop the lost pem file instance. Remember not to terminate instance but to stop it.
-		3. Goto EBS volumes, select the root volume of the lost pem file instance and detach.
-		4. Now again select the detached volume and this time you have to attach this volume to helper instance which we created before. Since helper instance already has a root volume by default as /dev/sda1, the newly attached volume will be secondary(eg: /dev/sdf).
+		3. Go to EBS volumes, select the root volume of the lost pem file instance and detach.
+		4. Now again select the detached volume and this time you have to attach this volume to helper instance which we created before. Since helper 
+		instance already has a root volume by default as /dev/sda1, the newly attached volume will be secondary(eg: /dev/sdf).
 		5. Login to your helper instance with its pem file.
 		6. Execute below commands:
 			# mount /dev/xvdf1 /mnt
@@ -165,7 +232,8 @@
 		
 	From <https://micropyramid.com/blog/how-to-access-ec2-instance-in-case-of-loss-of-pem-file/> 
 
-	37 * how your sharing the key  for a group of 4 members & these 4 members will be logged in from same username after 4/5 days customer complaining that a file deleted how can you track back who did what?
+	37 * how you are sharing the key  for a group of 4 members & these 4 members will be logged in from same username after 4/5 days customer complaining that a 
+	file deleted how can you track back who did what?
 		CloudTrail - auditing tool 
 	
 	38 * what instances you are using in your project? why particular those instances?
@@ -188,9 +256,11 @@
 	
 	
    42 * different routing policies in aws? which policy you have used for your project?
-		• Simple routing policy — Use for a single resource that performs a given function for your domain, for example, a web server that serves content for the example.com website.
+		• Simple routing policy — Use for a single resource that performs a given function for your domain, for example, a web server that serves content 
+		for the example.com website.
 		• Weighted routing policy — Use to route traffic to multiple resources in proportions that you specify.
-		• Latency routing policy — Use when you have resources in multiple AWS Regions and you want to route traffic to the region that provides the best latency.
+		• Latency routing policy — Use when you have resources in multiple AWS Regions and you want to route traffic to the region that provides the 
+		best latency.
 		• Failover routing policy — Use when you want to configure active-passive failover.
 		• Geolocation routing policy — Use when you want to route traffic based on the location of your users.
 		• Geoproximity routing policy — Use when you want to route traffic based on the location of your resources and, optionally, shift traffic from resources in one location to resources in another.
@@ -204,13 +274,15 @@
 			A record 
 	
 	46 * what is API gateway why we need it ?
-	
+	Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. 
+	It acts as a "front door" for your backend services, allowing you to create APIs that can be accessed by external clients such as mobile applications, 
+	web applications, and other services.
 		 Choose your own definition and go for it 
 	
 	47 * How you bind role to account ( script explain)
 		 Create custom policy and assign to a role
  
-	48 * how you configure autoscaling and cloud load balancer, Where your application is running EC2 or EKS , Why your team went manual instead of using EKS
+	48 * how you configured autoscaling and cloud load balancer, Where your application is running EC2 or EKS , Why your team went manual instead of using EKS
 	
 		{Possible Answer-- Need to check}
 
@@ -221,8 +293,18 @@
 			NACL - Network access control list is to control the inbound and outbound traffic on the network (or) VPC where is it configured  (Stateless)
 
 	56 * difference between nat instance and nat gateway
-			NAT Gateway -- to allow private subnet to access the pubic network (internet) via outbound traffic, inbound traffic from internet is restricted via NAT gateway
-			
+			NAT Gateway -- to allow private subnet to access the pubic network (internet) via outbound traffic, inbound traffic from internet is 
+			restricted via NAT gateway
+			Both NAT instances and NAT gateways are used in Amazon Web Services (AWS) to enable instances in a private subnet to connect to the internet 
+			or other AWS services.
+
+However, there are several differences between NAT instances and NAT gateways:
+
+High Availability: NAT gateways are highly available and managed by AWS, which means they automatically scale and provide failover. In contrast, NAT instances 
+need to be configured for high availability and scaling, which can be complex and require additional resources.
+
+Maintenance: NAT gateways are fully managed by AWS and require no maintenance, while NAT instances require more maintenance, such as operating system updates, 
+security patching, and regular monitoring.
 	58 * aws VPC components
 			Subnet, routing table, IGW, NAT Gateway, NACL, Security Group 
 
@@ -244,7 +326,7 @@
 			Horizontal scaling  -- adding the number of instances to support the application 
 			Vertical scaling  -- increasing the capacity of the instance (compute, ram etc..)
 
-	65 * how will you restrict inbound traffic when outbound traffic in open
+	65 * how will you restrict inbound traffic when outbound traffic is open
 			Using Security Groups 
 
 	66 * what is vpc and vpc peering
@@ -255,7 +337,8 @@
 		
 			Making the S3 bucket as Public  (also check if Assume role can be used or not ) 
 		
-	69 * One ALB with 2 instances A and B and ALB is mapped with 2 website site1 and site2, Can we configure requests which comes to site1 mapped to instance A n site2 to instance B,  Can we achieve this behaviour using ALB?
+	69 * One ALB with 2 instances A and B and ALB is mapped with 2 website site1 and site2, Can we configure requests which comes to site1 mapped to instance A 
+	n site2 to instance B,  Can we achieve this behaviour using ALB?
 			ALB configuring Listeners and routing, where port/protocol configured with either A (or) B instance and given the target group 
 
 	72 * I have one S3 bucket in which im going to upload 3 files, one with 2TB, 4.9TB and 5.1TB,  So how many files will get uploaded into S3 bucket?
